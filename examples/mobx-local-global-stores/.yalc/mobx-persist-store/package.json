@@ -1,0 +1,56 @@
+{
+  "name": "mobx-persist-store",
+  "version": "0.5.29+3b5dc14b",
+  "description": "Mobx Persist Store",
+  "author": "quarrant",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "files": [
+    "lib/"
+  ],
+  "keywords": [
+    "mobx",
+    "persist",
+    "mobx-persist",
+    "react-native",
+    "react"
+  ],
+  "homepage": "https://github.com/quarrant/mobx-persist-store#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quarrant/mobx-persist-store.git"
+  },
+  "bugs": {
+    "url": "https://github.com/quarrant/mobx-persist-store/issues"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "rm -rf lib && tsc",
+    "prepublishOnly": "yarn build",
+    "release-branch": "bash scripts/make-release-branch.sh"
+  },
+  "peerDependencies": {
+    "mobx": "*"
+  },
+  "jest": {
+    "modulePaths": [
+      "<rootDir>"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.ts?$": "ts-jest"
+    },
+    "testPathIgnorePatterns": [
+      "\\.snap$",
+      "<rootDir>/node_modules/"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!react-native)/"
+    ]
+  },
+  "yalcSig": "3b5dc14b00d39540aea55a8d5052991c"
+}
