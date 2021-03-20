@@ -2,7 +2,7 @@
   "version": "v1",
   "packages": {
     "mobx-persist-store": {
-      "signature": "3b5dc14b00d39540aea55a8d5052991c",
+      "signature": "4d76f7569cc1d2a13c7c6c3566b55a47",
       "file": true
     }
   }

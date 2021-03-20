@@ -1,13 +1,10 @@
 {
   "name": "mobx-persist-store",
-  "version": "0.5.29+3b5dc14b",
+  "version": "0.5.29+4d76f756",
   "description": "Mobx Persist Store",
   "author": "quarrant",
   "license": "MIT",
   "main": "lib/index.js",
-  "files": [
-    "lib/"
-  ],
   "keywords": [
     "mobx",
     "persist",
@@ -52,5 +49,5 @@
       "node_modules/(?!react-native)/"
     ]
   },
-  "yalcSig": "3b5dc14b00d39540aea55a8d5052991c"
+  "yalcSig": "4d76f7569cc1d2a13c7c6c3566b55a47"
 }
