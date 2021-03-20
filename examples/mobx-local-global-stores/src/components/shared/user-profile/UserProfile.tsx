@@ -64,11 +64,18 @@ export const UserProfile: React.FC<IProps> = observer((props) => {
                 content="Reload Browser"
                 color="blue"
                 icon="redo"
+                onClick={() => window.location.reload()}
+              />
+              <Button
+                attached="top"
+                content="Rehydrate Store"
+                color="green"
+                icon="spinner"
                 onClick={props.store.rehydrateStore}
               />
               <Segment attached="bottom" color="blue">
                 <Icon name="arrow left" />
-                Clicking &qout;Load Random User&qout; will update the store and at the same time the data is saved
+                Clicking &quot;Load Random User&quot; will update the store and at the same time the data is saved
                 locally to{' '}
                 <a
                   href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage"
@@ -105,8 +112,8 @@ export const UserProfile: React.FC<IProps> = observer((props) => {
                 .
                 <br />
                 <br />
-                After clicking &qout;Clear Store Persist&qout;, <b>reload the browser</b> and you will notice the
-                locally saved data is no longer loaded into the store.
+                After clicking &quot;Clear Store Persist&quot;, <b>reload the browser</b> or click{' '}
+                <b>Rehydrate Store</b> and you will notice the locally saved data is no longer loaded into the store.
               </Segment>
             </Grid.Column>
           </Grid>
