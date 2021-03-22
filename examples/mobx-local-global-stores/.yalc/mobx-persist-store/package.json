@@ -1,6 +1,6 @@
 {
   "name": "mobx-persist-store",
-  "version": "0.5.29+550551b2",
+  "version": "0.5.29+e6d44e17",
   "description": "Mobx Persist Store",
   "author": "quarrant",
   "license": "MIT",
@@ -52,5 +52,5 @@
       "node_modules/(?!react-native)/"
     ]
   },
-  "yalcSig": "550551b228c11f45f040d04f5907a404"
+  "yalcSig": "e6d44e17af95b66169a5d88be34df636"
 }
