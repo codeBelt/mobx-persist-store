@@ -46,7 +46,7 @@ export class IndexPageStore {
   }
 
   dispose(): void {
-    this.storePersist.dispose();
+    this.storePersist.disposePersist();
   }
 
   /**

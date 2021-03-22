@@ -6,9 +6,11 @@ import { mobxPersistStorageAdapter } from '../../../utils/mobx.utils';
 
 export class UserProfilesPageStore {
   user: IUser | null = null;
+  list: IUser[] = [];
+
   storePersist: MobxStorePersist<this> = persistence({
     name: 'UserProfilesPageStore',
-    properties: ['user'],
+    properties: ['user', 'list'],
     adapter: mobxPersistStorageAdapter,
     reactionOptions: {
       delay: 200,
@@ -53,6 +55,8 @@ export class UserProfilesPageStore {
     if (data) {
       runInAction(() => {
         this.user = data.results[0];
+
+        this.list.push(this.user);
       });
     }
   }
