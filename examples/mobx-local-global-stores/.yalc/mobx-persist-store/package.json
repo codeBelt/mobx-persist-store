@@ -5,6 +5,9 @@
   "author": "quarrant",
   "license": "MIT",
   "main": "lib/index.js",
+  "files": [
+    "lib/"
+  ],
   "keywords": [
     "mobx",
     "persist",
@@ -49,5 +52,5 @@
       "node_modules/(?!react-native)/"
     ]
   },
-  "yalcSig": "4d76f7569cc1d2a13c7c6c3566b55a47"
+  "yalcSig": "550551b228c11f45f040d04f5907a404"
 }
