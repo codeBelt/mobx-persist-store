@@ -145,8 +145,9 @@ export const UserProfile: React.FC<IProps> = observer((props) => {
                 </a>
                 . <br />
                 <br />
-                If you click "Stop Store Persist" then click "Load Random User" and reload the browser. You will notice
-                it only saved the last data before you stopped listening for changes in the store.
+                If you click &quot;Stop Store Persist&quot; then click &quot;Load Random User&quot; and reload the
+                browser. You will notice it only saved the last data before you stopped listening for changes in the
+                store.
                 <br />
                 <br />
                 If you want to restart persisting data you can call <b>startPersist</b> in the store and it will start
