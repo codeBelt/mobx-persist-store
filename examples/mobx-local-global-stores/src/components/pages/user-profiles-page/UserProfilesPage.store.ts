@@ -1,14 +1,14 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import { getUserRequest } from '../../../domains/auth/auth.services';
 import { IUser } from '../../../domains/auth/auth.types';
-import { MobxStorePersist, persistence } from 'mobx-persist-store';
+import { PersistStore, persistence } from 'mobx-persist-store';
 import { mobxPersistStorageAdapter } from '../../../utils/mobx.utils';
 
 export class UserProfilesPageStore {
   user: IUser | null = null;
   list: IUser[] = [];
 
-  storePersist: MobxStorePersist<this> = persistence({
+  storePersist: PersistStore<this> = persistence({
     name: 'UserProfilesPageStore',
     properties: ['user', 'list'],
     adapter: mobxPersistStorageAdapter,

@@ -1,6 +1,6 @@
 import { IApiError, SuccessfulResponse } from './http/http.types';
 import environment from 'environment';
-import { MobxStorePersist } from 'mobx-persist-store';
+import { PersistStore } from 'mobx-persist-store';
 import { persistence, StorageAdapter } from 'mobx-persist-store';
 
 export type ResponseStatus<T, E = IApiError> = Omit<SuccessfulResponse<T>, 'error'> & {
@@ -31,7 +31,7 @@ export const mobxPersistStorageAdapter = new StorageAdapter({
 
     return data ? JSON.parse(data) : undefined;
   },
-  write: async (name: string, content: Record<string, unknown>) => {
+  write: async (name: string, content: string) => {
     if (environment.isServer) {
       return;
     }
@@ -44,7 +44,7 @@ export const persistStore = <T, K extends keyof T>(
   target: T,
   properties: K[],
   name: string
-): MobxStorePersist<T> | null => {
+): PersistStore<T> | null => {
   if (environment.isServer) {
     return null;
   }

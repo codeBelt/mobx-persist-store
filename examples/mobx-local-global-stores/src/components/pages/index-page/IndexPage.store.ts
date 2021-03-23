@@ -6,7 +6,7 @@ import { ApiResponse } from '../../../utils/http/http.types';
 import { defaultShowId } from '../../../domains/shows/shows.constants';
 import orderBy from 'lodash.orderby';
 import { getGlobalStore } from '../../shared/global-store-provider/GlobalStoreProvider';
-import { MobxStorePersist, persistence } from 'mobx-persist-store';
+import { PersistStore, persistence } from 'mobx-persist-store';
 
 export class IndexPageStore {
   readonly globalStore = getGlobalStore();
@@ -14,7 +14,7 @@ export class IndexPageStore {
   showResults = initialResponseStatus<IShow | null>(null);
   castsResults = initialResponseStatus<ICast[]>([]);
 
-  storePersist: MobxStorePersist<this>;
+  storePersist: PersistStore<this>;
 
   constructor() {
     this.storePersist = persistence({
