@@ -112,8 +112,8 @@ export const UserProfile: React.FC<IProps> = observer((props) => {
                 .
                 <br />
                 <br />
-                After clicking &quot;Clear Store Persist&quot;, <b>reload the browser</b> or click{' '}
-                <b>Rehydrate Store</b> and you will notice the locally saved data is no longer loaded into the store.
+                After clicking &quot;Clear Store Persist&quot;, <b>reload the browser</b> and you will notice the
+                locally saved data is no longer loaded into the store.
               </Segment>
             </Grid.Column>
           </Grid>
