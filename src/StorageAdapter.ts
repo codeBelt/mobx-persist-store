@@ -51,13 +51,13 @@ export class StorageAdapter {
 
     // Fast path: non-string or stringify disabled → treat as plain
     if (!stringify || typeof storageData !== 'string') {
-      parsedData = (storageData as T) || ({} as T);
+      parsedData = (storageData as unknown as T) || ({} as T);
     } else {
       try {
         parsedData = JSON.parse(storageData as string) || ({} as T);
       } catch (error) {
         // Keep original if parsing fails
-        parsedData = (storageData as T) || ({} as T);
+        parsedData = (storageData as unknown as T) || ({} as T);
       }
     }
 
