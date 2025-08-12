@@ -78,10 +78,10 @@ export class PersistStore<T, P extends keyof T> {
     });
 
     // Cache per-property metadata and warn once (not on every reaction run)
-    const metaTarget: any = this.target;
+    const metaTarget = this.target as Record<string, unknown>;
     this.properties.forEach((property) => {
-      const isComputed = isComputedProp(metaTarget, property.key);
-      const isAct = isAction(metaTarget[property.key]);
+      const isComputed = isComputedProp(metaTarget, property.key as string);
+      const isAct = isAction((metaTarget as any)[property.key as string]);
       this.propertyMeta.set(property.key, { isComputed, isAction: isAct });
       computedPersistWarningIf(isComputed, String(property.key));
       actionPersistWarningIf(isAct, String(property.key));
@@ -146,7 +146,7 @@ export class PersistStore<T, P extends keyof T> {
       );
 
       // Reassigning so TypeScript doesn't complain (Object is possibly 'null') about this.target within forEach
-      const target: any = this.target;
+      const target = this.target as Record<string, unknown>;
 
       if (data) {
         runInAction(() => {
@@ -158,26 +158,26 @@ export class PersistStore<T, P extends keyof T> {
             if (allowPropertyHydration) {
               const propertyData = data[property.key];
 
-              if (target[property.key] instanceof ObservableMap && isArrayForMap(propertyData)) {
-                const deserialized = property.deserialize(new Map(propertyData));
+              if (target[property.key as string] instanceof ObservableMap && isArrayForMap(propertyData)) {
+                const deserialized = property.deserialize(new Map(propertyData) as unknown as T[P]);
                 if (deserialized instanceof Map) {
-                  const map = target[property.key] as ObservableMap<any, any>;
+                  const map = target[property.key as string] as unknown as ObservableMap<unknown, unknown>;
                   map.clear();
-                  deserialized.forEach((v, k) => map.set(k, v));
+                  (deserialized as Map<unknown, unknown>).forEach((v, k) => map.set(k, v));
                 } else {
-                  target[property.key] = deserialized;
+                  (target as any)[property.key as string] = deserialized;
                 }
-              } else if (target[property.key] instanceof ObservableSet && isArrayForSet(propertyData)) {
-                const deserialized = property.deserialize(new Set(propertyData));
+              } else if (target[property.key as string] instanceof ObservableSet && isArrayForSet(propertyData)) {
+                const deserialized = property.deserialize(new Set(propertyData) as unknown as T[P]);
                 if (deserialized instanceof Set) {
-                  const set = target[property.key] as ObservableSet<any>;
+                  const set = target[property.key as string] as unknown as ObservableSet<unknown>;
                   // replace maintains observers
-                  set.replace(Array.from(deserialized.values()));
+                  set.replace(Array.from((deserialized as Set<unknown>).values()));
                 } else {
-                  target[property.key] = deserialized;
+                  (target as any)[property.key as string] = deserialized;
                 }
               } else {
-                target[property.key] = property.deserialize(propertyData);
+                (target as any)[property.key as string] = property.deserialize(propertyData as T[P]);
               }
             }
           });
@@ -205,7 +205,7 @@ export class PersistStore<T, P extends keyof T> {
         this.enqueuedData = null;
         try {
           if (this.storageAdapter) {
-            await this.storageAdapter.setItem(this.storageName, next as Record<string, unknown> as any);
+            await this.storageAdapter.setItem(this.storageName, next as Record<string, unknown>);
           }
         } catch (error) {
           consoleDebug(this.debugMode, `${this.storageName} - setItem failed`, error);
@@ -221,7 +221,7 @@ export class PersistStore<T, P extends keyof T> {
     }
 
     // Reassigning so TypeScript doesn't complain (Object is possibly 'null') about and this.target within reaction
-    const target: any = this.target;
+    const target = this.target as Record<string, unknown>;
 
     this.cancelWatch = reaction(
       () => {
@@ -231,23 +231,23 @@ export class PersistStore<T, P extends keyof T> {
           const meta = this.propertyMeta.get(property.key) || { isComputed: false, isAction: false };
 
           if (!meta.isComputed && !meta.isAction) {
-            let propertyData = property.serialize(target[property.key]);
+            let propertyData = property.serialize((target as any)[property.key as string] as T[P]);
 
             if (propertyData instanceof ObservableMap) {
-              const mapArray: any[] = [];
-              propertyData.forEach((v, k) => {
+              const mapArray: [unknown, unknown][] = [];
+              (propertyData as ObservableMap<unknown, unknown>).forEach((v, k) => {
                 mapArray.push([k, toJS(v)]);
               });
-              propertiesToWatch[property.key] = mapArray;
+              propertiesToWatch[property.key] = mapArray as unknown as T[P];
               return;
             }
 
             if (propertyData instanceof ObservableSet) {
-              propertiesToWatch[property.key] = Array.from(propertyData).map(toJS);
+              propertiesToWatch[property.key] = Array.from(propertyData).map(toJS) as unknown as T[P];
               return;
             }
 
-            propertiesToWatch[property.key] = toJS(propertyData);
+            propertiesToWatch[property.key] = toJS(propertyData) as unknown as T[P];
           }
         });
 
@@ -283,13 +283,14 @@ export class PersistStore<T, P extends keyof T> {
 
     consoleDebug(this.debugMode, `${this.storageName} - (stopPersisting)`);
 
-    PersistStoreMap.delete(this.target);
+    PersistStoreMap.delete(this.target as unknown as object);
     try {
       // Lazy import to avoid circular at module load; but it's a value import so accepted.
       // If not available, skip silently.
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { PersistStoreNameMap } = require('./PersistStoreMap') as typeof import('./PersistStoreMap');
-      if (PersistStoreNameMap.get(this.storageName) === (this as unknown as PersistStore<any, any>)) {
+      const candidate = PersistStoreNameMap.get(this.storageName) as unknown;
+      if (candidate && candidate === (this as unknown)) {
         PersistStoreNameMap.delete(this.storageName);
       }
     } catch {}
@@ -309,11 +310,10 @@ export class PersistStore<T, P extends keyof T> {
     }
   }
 
-  public async getPersistedStore<T extends Record<string, any>>(): Promise<T | null> {
+  public async getPersistedStore(): Promise<Record<string, unknown> | null> {
     if (this.storageAdapter) {
       consoleDebug(this.debugMode, `${this.storageName} - (getPersistedStore)`);
 
-      // @ts-ignore
       return this.storageAdapter.getItem(this.storageName);
     }
 

@@ -25,7 +25,7 @@ export class StorageAdapter {
         })
       : item;
 
-    const content: any = stringify ? JSON.stringify(data) : data;
+    const content: string | T = stringify ? JSON.stringify(data) : data;
 
     consoleDebug(debugMode, `${key} - setItem:`, content);
 
@@ -36,9 +36,9 @@ export class StorageAdapter {
     }
   }
 
-  async getItem<T extends Record<string, any>>(key: string): Promise<T> {
+  async getItem<T extends Record<string, unknown>>(key: string): Promise<T> {
     const { removeOnExpiration = true, debugMode = false, version, stringify = true } = this.options;
-    let storageData: any;
+    let storageData: unknown;
 
     try {
       storageData = await this.options.storage?.getItem(key);
@@ -54,15 +54,17 @@ export class StorageAdapter {
       parsedData = (storageData as unknown as T) || ({} as T);
     } else {
       try {
-        parsedData = JSON.parse(storageData as string) || ({} as T);
+        parsedData = (JSON.parse(storageData as string) as T) || ({} as T);
       } catch (error) {
         // Keep original if parsing fails
         parsedData = (storageData as unknown as T) || ({} as T);
       }
     }
 
-    const hasExpired = hasTimestampExpired(parsedData.__mps__?.expireInTimestamp);
-    const mismatchedVersion = version && parsedData.__mps__?.version !== version;
+    const meta = (parsedData as unknown as { __mps__?: { expireInTimestamp?: number; version?: number } }).__mps__;
+    const expireTs = meta?.expireInTimestamp;
+    const hasExpired = typeof expireTs === 'number' ? hasTimestampExpired(expireTs) : false;
+    const mismatchedVersion = typeof version === 'number' ? meta?.version !== version : false;
 
     consoleDebug(debugMode, `${key} - hasExpired`, hasExpired);
     consoleDebug(debugMode, `${key} - mismatchedVersion`, mismatchedVersion);

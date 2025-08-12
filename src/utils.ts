@@ -16,20 +16,19 @@ export const isDefined = <T>(t: T | null | undefined): t is T => t != null;
 /**
  * Check if the data is an object.
  */
-export const isObject = (data: any): boolean => {
+export const isObject = (data: unknown): data is Record<string, unknown> => {
   return Boolean(data) && Array.isArray(data) === false && typeof data === 'object';
 };
 
 /**
  * Check the data is an object with properties.
  */
-export const isObjectWithProperties = (data: any): boolean => {
+export const isObjectWithProperties = (data: unknown): data is Record<string, unknown> => {
   return isObject(data) && Object.keys(data).length > 0;
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export const isFunction = (functionToCheck: any): boolean => {
-  return functionToCheck && typeof functionToCheck === 'function';
+export const isFunction = (functionToCheck: unknown): functionToCheck is Function => {
+  return Boolean(functionToCheck) && typeof functionToCheck === 'function';
 };
 
 export const isStorageControllerLike = (value: StorageController | Storage | undefined): value is StorageController => {
@@ -82,7 +81,7 @@ export const actionPersistWarningIf = (isComputedProperty: boolean, propertyName
   }
 };
 
-export const consoleDebug = (isDebugMode: boolean, message: string, content: any = ''): void => {
+export const consoleDebug = (isDebugMode: boolean, message: string, content: unknown = ''): void => {
   if (isDebugMode && isBrowser && isNotProductionBuild) {
     console.info(
       `%c mobx-persist-store: (Debug Mode) ${message} `,
@@ -92,7 +91,7 @@ export const consoleDebug = (isDebugMode: boolean, message: string, content: any
   }
 };
 
-export const isArrayForMap = (value: unknown): value is [any, any][] => {
+export const isArrayForMap = (value: unknown): value is [unknown, unknown][] => {
   if (Array.isArray(value)) {
     return value.every((v) => Array.isArray(v));
   }
@@ -100,11 +99,16 @@ export const isArrayForMap = (value: unknown): value is [any, any][] => {
   return false;
 };
 
-export const isArrayForSet = (value: unknown): value is any[] => {
+export const isArrayForSet = (value: unknown): value is unknown[] => {
   return Array.isArray(value);
 };
 
-export const omitObjectProperties = <V>(obj: Record<string, V>, testFn: (value: V) => boolean) => {
-  Object.keys(obj).forEach((key) => testFn(obj[key]) && delete obj[key]);
+export const omitObjectProperties = <V>(obj: Record<string, V>, testFn: (value: NonNullable<V>) => boolean): Record<string, V> => {
+  Object.keys(obj).forEach((key) => {
+    const current = obj[key];
+    if (testFn(current as NonNullable<V>)) {
+      delete obj[key];
+    }
+  });
   return obj;
 };

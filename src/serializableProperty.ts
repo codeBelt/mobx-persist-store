@@ -5,12 +5,12 @@ import { consoleDebug, isObject } from './utils';
 export type SerializableProperty<T, P extends keyof T> = {
   [X in P]: {
     key: X;
-    serialize: (value: T[X]) => any;
-    deserialize: (value: any) => T[X];
+    serialize: (value: T[X]) => unknown;
+    deserialize: (value: unknown) => T[X];
   };
 }[P];
 
-const isSerializableProperty = <T, P extends keyof T>(obj: any): obj is SerializableProperty<T, P> => {
+const isSerializableProperty = <T, P extends keyof T>(obj: unknown): obj is SerializableProperty<T, P> => {
   const keys: (keyof SerializableProperty<T, P>)[] = ['key', 'serialize', 'deserialize'];
 
   if (!isObject(obj)) {
@@ -19,7 +19,7 @@ const isSerializableProperty = <T, P extends keyof T>(obj: any): obj is Serializ
   }
 
   return keys.every((key) => {
-    if (obj.hasOwnProperty(key) && typeof key !== 'undefined') {
+    if (Object.prototype.hasOwnProperty.call(obj, key) && typeof key !== 'undefined') {
       return true;
     }
 
@@ -37,8 +37,8 @@ export const makeSerializableProperties = <T, P extends keyof T>(
         acc.push({
           key: curr,
           serialize: <V>(value: V) => value,
-          deserialize: (value: any) => value,
-        });
+          deserialize: (value: unknown) => value as T[P],
+        } as SerializableProperty<T, P>);
 
         return acc;
       }

@@ -3,7 +3,7 @@ import { PersistStore } from './PersistStore';
 import { PersistStoreMap, PersistStoreNameMap } from './PersistStoreMap';
 import { duplicatedStoreWarningIf } from './utils';
 
-const setMobxPersistStore = <T extends { [key: string]: any }, P extends keyof T>(
+const setMobxPersistStore = <T extends Record<string, unknown>, P extends keyof T>(
   target: T,
   persistStore: PersistStore<T, P>
 ) => {
@@ -20,11 +20,11 @@ const setMobxPersistStore = <T extends { [key: string]: any }, P extends keyof T
     }
   }
 
-  PersistStoreNameMap.set(persistStore.storageName, persistStore as unknown as PersistStore<any, any>);
-  PersistStoreMap.set(target, persistStore);
+  PersistStoreNameMap.set(persistStore.storageName, persistStore as unknown as PersistStore<Record<string, unknown>, string>);
+  PersistStoreMap.set(target, persistStore as unknown as PersistStore<Record<string, unknown>, string>);
 };
 
-export const makePersistable = async <T extends { [key: string]: any }, P extends keyof T>(
+export const makePersistable = async <T extends Record<string, unknown>, P extends keyof T>(
   target: T,
   storageOptions: PersistenceStorageOptions<T, P>,
   reactionOptions?: ReactionOptions

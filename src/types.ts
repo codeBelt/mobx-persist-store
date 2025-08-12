@@ -3,7 +3,7 @@ import { SerializableProperty } from './serializableProperty';
 
 export type ReactionOptions = IAutorunOptions & {
   fireImmediately?: boolean;
-  equals?: (a: any, b: any) => boolean;
+  equals?: (a: unknown, b: unknown) => boolean;
   optimizeWrites?: boolean;
 };
 
@@ -71,5 +71,5 @@ export interface StorageController {
    * @param {String | Object} value
    * @return {Promise<void>}
    */
-  setItem(key: string, value: any): void | Promise<void>;
+  setItem(key: string, value: unknown): void | Promise<void>;
 }
