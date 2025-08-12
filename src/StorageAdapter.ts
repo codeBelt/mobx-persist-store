@@ -25,30 +25,46 @@ export class StorageAdapter {
         })
       : item;
 
-    const content = stringify ? JSON.stringify(data) : data;
+    const content: any = stringify ? JSON.stringify(data) : data;
 
     consoleDebug(debugMode, `${key} - setItem:`, content);
 
-    await this.options.storage?.setItem(key, content);
+    try {
+      await this.options.storage?.setItem(key, content);
+    } catch (error) {
+      consoleDebug(debugMode, `${key} - setItem failed`, error);
+    }
   }
 
   async getItem<T extends Record<string, any>>(key: string): Promise<T> {
-    const { removeOnExpiration = true, debugMode = false, version } = this.options;
-    const storageData = await this.options.storage?.getItem(key);
-    let parsedData: T;
+    const { removeOnExpiration = true, debugMode = false, version, stringify = true } = this.options;
+    let storageData: any;
 
     try {
-      parsedData = JSON.parse(storageData as string) || {};
+      storageData = await this.options.storage?.getItem(key);
     } catch (error) {
+      consoleDebug(debugMode, `${key} - getItem failed`, error);
+      return {} as T;
+    }
+
+    let parsedData: T;
+
+    // Fast path: non-string or stringify disabled → treat as plain
+    if (!stringify || typeof storageData !== 'string') {
       parsedData = (storageData as T) || ({} as T);
+    } else {
+      try {
+        parsedData = JSON.parse(storageData as string) || ({} as T);
+      } catch (error) {
+        // Keep original if parsing fails
+        parsedData = (storageData as T) || ({} as T);
+      }
     }
 
     const hasExpired = hasTimestampExpired(parsedData.__mps__?.expireInTimestamp);
-
     const mismatchedVersion = version && parsedData.__mps__?.version !== version;
 
     consoleDebug(debugMode, `${key} - hasExpired`, hasExpired);
-
     consoleDebug(debugMode, `${key} - mismatchedVersion`, mismatchedVersion);
 
     if ((hasExpired && removeOnExpiration) || mismatchedVersion) {
@@ -67,6 +83,10 @@ export class StorageAdapter {
 
     consoleDebug(debugMode, `${key} - (removeItem): storage was removed`);
 
-    await this.options.storage?.removeItem(key);
+    try {
+      await this.options.storage?.removeItem(key);
+    } catch (error) {
+      consoleDebug(debugMode, `${key} - removeItem failed`, error);
+    }
   }
 }
