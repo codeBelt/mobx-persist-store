@@ -1,4 +1,3 @@
-/** @jest-environment jsdom */
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { makeObservable, observable } from 'mobx';
 

@@ -1,4 +1,3 @@
-/** @jest-environment jsdom */
 import { describe, test, expect } from 'vitest';
 import ms from 'milliseconds';
 import { mpsConfig, mpsReactionOptions, StorageOptions, configurePersistable, ReactionOptions } from './index';

@@ -1,4 +1,3 @@
-/** @jest-environment jsdom */
 import { describe, test, expect, beforeEach } from 'vitest';
 import { makeObservable, observable } from 'mobx';
 import { PersistStoreMap, configurePersistable, makePersistable, stopPersisting } from './index';

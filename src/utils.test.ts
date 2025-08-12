@@ -86,8 +86,6 @@ describe('Testing Utils', () => {
   });
 });
 
-/** @jest-environment jsdom */
-
 describe('additional utils', () => {
   const originalNodeEnv = process.env.NODE_ENV;
 
