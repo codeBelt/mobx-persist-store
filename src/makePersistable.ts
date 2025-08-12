@@ -20,7 +20,10 @@ const setMobxPersistStore = <T extends Record<string, unknown>, P extends keyof 
     }
   }
 
-  PersistStoreNameMap.set(persistStore.storageName, persistStore as unknown as PersistStore<Record<string, unknown>, string>);
+  PersistStoreNameMap.set(
+    persistStore.storageName,
+    persistStore as unknown as PersistStore<Record<string, unknown>, string>
+  );
   PersistStoreMap.set(target, persistStore as unknown as PersistStore<Record<string, unknown>, string>);
 };
 

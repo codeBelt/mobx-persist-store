@@ -103,7 +103,10 @@ export const isArrayForSet = (value: unknown): value is unknown[] => {
   return Array.isArray(value);
 };
 
-export const omitObjectProperties = <V>(obj: Record<string, V>, testFn: (value: NonNullable<V>) => boolean): Record<string, V> => {
+export const omitObjectProperties = <V>(
+  obj: Record<string, V>,
+  testFn: (value: NonNullable<V>) => boolean
+): Record<string, V> => {
   Object.keys(obj).forEach((key) => {
     const current = obj[key];
     if (testFn(current as NonNullable<V>)) {
