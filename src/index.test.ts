@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest';
 import * as api from './index';
 
 describe('index exports', () => {

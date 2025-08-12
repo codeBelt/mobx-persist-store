@@ -1,3 +1,4 @@
+import { describe, test, expect, beforeEach } from 'vitest';
 import { makeObservable, observable, runInAction } from 'mobx';
 import { clearPersistedStore, configurePersistable, makePersistable } from './index';
 

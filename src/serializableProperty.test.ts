@@ -1,3 +1,4 @@
+import { describe, test, expect, beforeEach } from 'vitest';
 import { configurePersistable } from './configurePersistable';
 import { makeSerializableProperties } from './serializableProperty';
 

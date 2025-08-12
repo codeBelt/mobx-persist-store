@@ -1,5 +1,20 @@
-/** @jest-environment jsdom */
-import { buildExpireTimestamp, hasTimestampExpired, isDefined, isObjectWithProperties, isObject } from './utils';
+import { describe, test, expect, beforeEach, afterAll, vi } from 'vitest';
+import {
+  buildExpireTimestamp,
+  hasTimestampExpired,
+  isDefined,
+  isObjectWithProperties,
+  isObject,
+  isFunction,
+  isStorageControllerLike,
+  invalidStorageAdaptorWarningIf,
+  consoleDebug,
+  computedPersistWarningIf,
+  actionPersistWarningIf,
+  isArrayForMap,
+  isArrayForSet,
+  omitObjectProperties,
+} from './utils';
 import ms from 'milliseconds';
 
 describe('buildExpireTimestamp', () => {
@@ -71,18 +86,20 @@ describe('Testing Utils', () => {
   });
 });
 
+/** @jest-environment jsdom */
+
 describe('additional utils', () => {
   const originalNodeEnv = process.env.NODE_ENV;
 
   beforeEach(() => {
     process.env.NODE_ENV = 'test';
-    (console.info as any) = jest.fn();
-    (console.warn as any) = jest.fn();
+    vi.spyOn(console, 'info').mockImplementation(() => {});
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
   afterAll(() => {
     process.env.NODE_ENV = originalNodeEnv;
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   test('isFunction', () => {
@@ -90,30 +107,28 @@ describe('additional utils', () => {
     const fn = function () {};
     const arrow = () => {};
     const notFn = {};
+    expect(isFunction(fn)).toBe(true);
+    expect(isFunction(arrow)).toBe(true);
     // @ts-ignore
-    expect(require('./utils').isFunction(fn)).toBe(true);
-    // @ts-ignore
-    expect(require('./utils').isFunction(arrow)).toBe(true);
-    // @ts-ignore
-    expect(require('./utils').isFunction(notFn)).toBe(false);
+    expect(isFunction(notFn)).toBe(false);
   });
 
   test('isStorageControllerLike - valid custom controller', () => {
-    const ctrl = { getItem: jest.fn(), setItem: jest.fn(), removeItem: jest.fn() };
+    const ctrl = { getItem: vi.fn(), setItem: vi.fn(), removeItem: vi.fn() };
     // @ts-ignore
-    expect(require('./utils').isStorageControllerLike(ctrl)).toBe(true);
+    expect(isStorageControllerLike(ctrl)).toBe(true);
   });
 
   test('isStorageControllerLike - invalid controller triggers warning', () => {
-    const { invalidStorageAdaptorWarningIf, isStorageControllerLike } = require('./utils');
-    const bad = { setItem: jest.fn() };
+    const bad = { setItem: vi.fn() };
+    // @ts-ignore
     expect(isStorageControllerLike(bad)).toBe(false);
-    invalidStorageAdaptorWarningIf(bad, 'badStorage');
+    // @ts-ignore
+    invalidStorageAdaptorWarningIf(bad as any, 'badStorage');
     expect(console.warn).toHaveBeenCalled();
   });
 
   test('consoleDebug logs only in debug mode', () => {
-    const { consoleDebug } = require('./utils');
     consoleDebug(false, 'msg');
     expect(console.info).not.toHaveBeenCalled();
     consoleDebug(true, 'msg');
@@ -121,14 +136,12 @@ describe('additional utils', () => {
   });
 
   test('computedPersistWarningIf and actionPersistWarningIf', () => {
-    const { computedPersistWarningIf, actionPersistWarningIf } = require('./utils');
     computedPersistWarningIf(true, 'a');
     actionPersistWarningIf(true, 'b');
     expect(console.warn).toHaveBeenCalledTimes(2);
   });
 
   test('isArrayForMap', () => {
-    const { isArrayForMap } = require('./utils');
     expect(
       isArrayForMap([
         ['a', 1],
@@ -140,13 +153,11 @@ describe('additional utils', () => {
   });
 
   test('isArrayForSet', () => {
-    const { isArrayForSet } = require('./utils');
     expect(isArrayForSet([1, 2, 3])).toBe(true);
     expect(isArrayForSet('no')).toBe(false);
   });
 
   test('omitObjectProperties', () => {
-    const { omitObjectProperties } = require('./utils');
     const obj = { a: 1, b: undefined, c: 0 } as any;
     const result = omitObjectProperties(obj, (v: any) => v === undefined);
     expect(result).toEqual({ a: 1, c: 0 });

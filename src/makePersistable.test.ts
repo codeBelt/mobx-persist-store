@@ -1,5 +1,5 @@
 /** @jest-environment jsdom */
-import mockConsole from 'jest-mock-console';
+import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import { makeObservable, observable } from 'mobx';
 
 import { PersistStore, PersistStoreMap, configurePersistable, makePersistable } from './index';
@@ -12,15 +12,15 @@ class CounterStore {
 }
 
 describe('makePersistable', () => {
-  let restoreConsole: ReturnType<typeof mockConsole>;
+  let warnSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    restoreConsole = mockConsole();
+    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     configurePersistable({ storage: localStorage, stringify: true });
   });
 
   afterEach(() => {
-    restoreConsole();
+    warnSpy.mockRestore();
     PersistStoreMap.clear();
   });
 
@@ -36,7 +36,7 @@ describe('makePersistable', () => {
     const first = new CounterStore();
     await makePersistable(first, { name: 'dup', properties: ['value'] });
 
-    const stopSpy = jest.spyOn(PersistStore.prototype, 'stopPersisting');
+    const stopSpy = vi.spyOn(PersistStore.prototype, 'stopPersisting');
 
     const second = new CounterStore();
     await makePersistable(second, { name: 'dup', properties: ['value'] });
@@ -45,7 +45,7 @@ describe('makePersistable', () => {
     expect(PersistStoreMap.get(first)).toBeUndefined();
     expect(PersistStoreMap.get(second)).toBeDefined();
 
-    expect((console.warn as jest.Mock).mock.calls.join('\n')).toContain(
+    expect(warnSpy.mock.calls.map((c) => c.join(' ')).join('\n')).toContain(
       '\'makePersistable\' was called with the same storage name "dup"'
     );
   });

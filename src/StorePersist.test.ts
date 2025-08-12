@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import ms from 'milliseconds';
 import { makeObservable, observable, runInAction } from 'mobx';
-import mockConsole from 'jest-mock-console';
 
 import { ReactionOptions, StorageOptions, PersistStore, configurePersistable } from './index';
 
@@ -32,16 +32,15 @@ describe('StorePersist', () => {
     delay: 200,
     fireImmediately: false,
   };
-  let restoreConsole: ReturnType<typeof mockConsole>;
+  let warnSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    restoreConsole = mockConsole();
-
+    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
     configurePersistable({});
   });
 
   afterEach(() => {
-    restoreConsole();
+    warnSpy.mockRestore();
   });
 
   describe('storageAdapter', () => {
@@ -166,8 +165,8 @@ describe('StorePersist', () => {
         stringify: true,
       });
 
-      const spyOnSerialize = jest.spyOn(storePersist['properties'][0], 'serialize');
-      const spyOnDeserialize = jest.spyOn(storePersist['properties'][0], 'deserialize');
+      const spyOnSerialize = vi.spyOn(storePersist['properties'][0], 'serialize');
+      const spyOnDeserialize = vi.spyOn(storePersist['properties'][0], 'deserialize');
 
       await storePersist.init();
 

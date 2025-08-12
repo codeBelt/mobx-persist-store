@@ -34,7 +34,7 @@
     "prepublishOnly": "npm run build",
     "npm:release": "bash scripts/make-release-branch.sh",
     "---------- Testing ----------------------------------------------------": "",
-    "test": "jest",
+    "test": "vitest run",
     "---------- Linting ----------------------------------------------------": "",
     "ts": "tsc --noEmit",
     "---------- helper commands --------------------------------------------": "",
@@ -55,7 +55,8 @@
     "@babel/types": "^7.18.4",
     "@types/jest": "^28.1.1",
     "@types/milliseconds": "^0.0.30",
-    "@types/node": "^17.0.40",
+    "@types/node": "^20.11.0",
+    "@vitest/ui": "^1.6.1",
     "babel-plugin-transform-typescript-metadata": "^0.3.2",
     "jest": "^28.1.0",
     "jest-environment-jsdom": "^28.1.0",
@@ -64,31 +65,7 @@
     "milliseconds": "^1.0.3",
     "mobx": "^6.3.0",
     "ts-jest": "^28.0.4",
-    "typescript": "^4.2.4"
-  },
-  "jest": {
-    "modulePaths": [
-      "<rootDir>/src/"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
-    "transform": {
-      "^.+\\.ts?$": "ts-jest"
-    },
-    "testPathIgnorePatterns": [
-      "\\.snap$",
-      "<rootDir>/node_modules/",
-      "<rootDir>/examples/"
-    ],
-    "transformIgnorePatterns": [
-      "node_modules/(?!react-native)/"
-    ],
-    "resetMocks": false,
-    "setupFiles": [
-      "jest-localstorage-mock"
-    ]
+    "typescript": "^4.2.4",
+    "vitest": "^1.6.1"
   }
 }
