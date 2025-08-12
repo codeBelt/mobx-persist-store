@@ -1,4 +1,4 @@
-import { StorageAdapter } from '../src';
+import { StorageAdapter } from './index';
 import ms from 'milliseconds';
 
 let testStorage: Record<string, any> = {};

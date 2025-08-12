@@ -5,7 +5,7 @@ import ms from 'milliseconds';
 import { makeObservable, observable, runInAction } from 'mobx';
 import mockConsole from 'jest-mock-console';
 
-import { ReactionOptions, StorageOptions, PersistStore, configurePersistable } from '../src';
+import { ReactionOptions, StorageOptions, PersistStore, configurePersistable } from './index';
 
 class MyStore {
   list: string[] = [];
