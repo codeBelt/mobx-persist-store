@@ -1,5 +1,5 @@
-<h1 align="center">Mobx Persist Store</h1>
-<h4 align="center">A simple way to persist and rehydrate observable properties in mobx stores</h4>
+<h1 align="center">MobX Persist Store</h1>
+<h4 align="center">A simple way to persist and rehydrate observable properties in MobX stores</h4>
 <div align="center">
 	<a href="https://yarn.pm/mobx-persist-store"><img
 		alt="npm version"
@@ -45,7 +45,7 @@ npm i mobx-persist-store
 
 ## Demo
 
-<a href="https://codesandbox.io/s/mobx-persist-store-version-1-f852w?file=/src/stores/User.store.ts&theme=dark" target="_blank">Mobx Persist Store with MobX 6</a>
+<a href="https://codesandbox.io/s/mobx-persist-store-version-1-f852w?file=/src/stores/User.store.ts&theme=dark" target="_blank">MobX Persist Store with MobX 6</a>
 <a href="https://codesandbox.io/s/mobx-persist-store-version-1-f852w?file=/src/stores/User.store.ts&theme=dark" target="_blank">![demo screen shot](./demo-screen-shot.png)</a>
 
 ## Getting Started
@@ -68,7 +68,7 @@ import { makeAutoObservable } from 'mobx';
 import { makePersistable } from 'mobx-persist-store';
 
 export class SampleStore {
-  someProperty: [];
+  someProperty = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -85,7 +85,7 @@ import { makeAutoObservable } from 'mobx';
 import { makePersistable } from 'mobx-persist-store';
 
 export class SampleStore {
-  someProperty: ['a', 'b', 'c'];
+  someProperty = ['a', 'b', 'c'];
 
   constructor() {
     makeAutoObservable(this);
@@ -122,6 +122,7 @@ makePersistable(
     name: 'SampleStore',
     properties: ['someProperty'],
     storage: localForage,  // localForage, window.localStorage, AsyncStorage all have the same interface
+    version: 1,
     expireIn: 86400000, // One day in milliseconds
     removeOnExpiration: true,
     stringify: false,
@@ -143,6 +144,7 @@ import { configurePersistable } from 'mobx-persist-store';
 configurePersistable(
   {
     storage: window.localStorage,
+    version: 1,
     expireIn: 86400000,
     removeOnExpiration: true,
     stringify: false,
@@ -154,7 +156,7 @@ configurePersistable(
 
 ```javascript
 export class SampleStore {
-  someProperty: [];
+  someProperty = [];
 
   constructor() {
     makeAutoObservable(this);
@@ -207,7 +209,7 @@ You should only need `makePersistable` but this library also provides other util
 > import { makePersistable } from 'mobx-persist-store';
 >
 > class SampleStore {
->   someProperty: [];
+>   someProperty = [];
 >
 >   constructor() {
 >     makeAutoObservable(this);
@@ -242,18 +244,21 @@ You should only need `makePersistable` but this library also provides other util
 > - `expireIn` (Number) - A value in milliseconds to determine when the data in storage should not be retrieved by getItem. Never expires by default.
 > - `removeOnExpiration` (Boolean) - If expireIn has a value and has expired, the data in storage will be removed automatically when getItem is called. The default value is true.
 > - `stringify` (Boolean) - When true the data will be JSON.stringify before being passed to setItem. The default value is true.
+>   - Note: Set `stringify: false` only when your storage accepts non-string values (e.g., `localForage`, `AsyncStorage`). Browsers' `localStorage` requires strings.
+> - `version` (Number) - When specified, persisted data is automatically cleared if the version in storage doesn't match. By default, no version is used.
 > - `debugMode` (Boolean) - When true a console.info will be called for several of mobx-persist-store items. The default value is false.
 >
 > **ReactionOptions** [MobX Reactions Options](https://mobx.js.org/reactions.html#options-)
 >
 > - `delay` (Number) - Allows you to set a `delay` option to limit the amount of times the `write` function is called. No delay by default.
 >   - For example if you have a `200` millisecond delay and two changes happen within the delay time then the `write` function is only called once. If you have no delay then the `write` function would be called twice.
-> - `fireImmediately` (Boolean) - Determines if the store data should immediately be persisted or wait until a property in store changes. `false` by default.
+> - `fireImmediately` (Boolean) - Determines if the store data should immediately be persisted or wait until a property in store changes. `true` by default.
 >
 > ```javascript
 > configurePersistable(
 >   {
 >     storage: window.localStorage,
+>     version: 1,
 >     expireIn: 86400000,
 >     removeOnExpiration: true,
 >     stringify: false,
@@ -268,6 +273,7 @@ You should only need `makePersistable` but this library also provides other util
 >     name: 'SampleStore',
 >     properties: ['someProperty'],
 >     storage: window.localStorage,
+>     version: 1,
 >     expireIn: 86400000,
 >     removeOnExpiration: true,
 >     stringify: false,
@@ -286,7 +292,7 @@ You should only need `makePersistable` but this library also provides other util
 > import { makePersistable, isHydrated } from 'mobx-persist-store';
 >
 > class SampleStore {
->   someProperty: [];
+>   someProperty = [];
 >
 >   constructor() {
 >     makeAutoObservable(this, {}, { autoBind: true });
@@ -309,7 +315,7 @@ You should only need `makePersistable` but this library also provides other util
 > import { makePersistable, isPersisting } from 'mobx-persist-store';
 >
 > class SampleStore {
->   someProperty: [];
+>   someProperty = [];
 >
 >   constructor() {
 >     makeAutoObservable(this, {}, { autoBind: true });
@@ -331,7 +337,7 @@ You should only need `makePersistable` but this library also provides other util
 > import { makePersistable, pausePersisting } from 'mobx-persist-store';
 >
 > class SampleStore {
->   someProperty: [];
+>   someProperty = [];
 >
 >   constructor() {
 >     makeAutoObservable(this, {}, { autoBind: true });
@@ -342,6 +348,8 @@ You should only need `makePersistable` but this library also provides other util
 >     pausePersisting(this);
 >   }
 > }
+>
+> When calling `pausePersisting` the value will be `false`, and it becomes `true` when `startPersisting` is called.
 > ```
 
 #### startPersisting
@@ -353,7 +361,7 @@ You should only need `makePersistable` but this library also provides other util
 > import { makePersistable, startPersisting } from 'mobx-persist-store';
 >
 > class SampleStore {
->   someProperty: [];
+>   someProperty = [];
 >
 >   constructor() {
 >     makeAutoObservable(this, {}, { autoBind: true });
@@ -376,7 +384,7 @@ You should only need `makePersistable` but this library also provides other util
 > import { makePersistable, stopPersisting } from 'mobx-persist-store';
 >
 > class SampleStore {
->   someProperty: [];
+>   someProperty = [];
 >
 >   constructor() {
 >     makeAutoObservable(this, {}, { autoBind: true });
@@ -389,7 +397,7 @@ You should only need `makePersistable` but this library also provides other util
 > }
 > ```
 >
-> This function prevents memory leaks when you have store(s) that are removed or re-crated.
+> This function prevents memory leaks when you have store(s) that are removed or re-created.
 > In the React example below `stopPersisting` is called when the component is unmounted.
 >
 > ```javascript
@@ -418,14 +426,14 @@ You should only need `makePersistable` but this library also provides other util
 #### hydrateStore (Promise)
 
 > **hydrateStore** will update the store with the persisted data. This will happen automatically with the initial `makePersistable` call.
-> This function is provide to manually hydrate the store. You should not have to call it unless you are doing something that modified the persisted data outside the store.
+> This function is provided to manually hydrate the store. You should not have to call it unless you are doing something that modified the persisted data outside the store.
 >
 > ```javascript
 > import { makeAutoObservable } from 'mobx';
 > import { makePersistable, hydrateStore } from 'mobx-persist-store';
 >
 > class SampleStore {
->   someProperty: [];
+>   someProperty = [];
 >
 >   constructor() {
 >     makeAutoObservable(this, {}, { autoBind: true });
@@ -440,14 +448,14 @@ You should only need `makePersistable` but this library also provides other util
 
 #### clearPersistedStore (Promise)
 
-> **clearPersistedStore** will remove the persisted data. This function is provide to manually clear the store's persisted data.
+> **clearPersistedStore** will remove the persisted data. This function is provided to manually clear the store's persisted data.
 >
 > ```javascript
 > import { makeAutoObservable } from 'mobx';
 > import { makePersistable, clearPersistedStore } from 'mobx-persist-store';
 >
 > class SampleStore {
->   someProperty: [];
+>   someProperty = [];
 >
 >   constructor() {
 >     makeAutoObservable(this, {}, { autoBind: true });
@@ -462,14 +470,14 @@ You should only need `makePersistable` but this library also provides other util
 
 #### getPersistedStore (Promise)
 
-> **getPersistedStore** will get the persisted data. This function is provide to manually get the store's persisted data.
+> **getPersistedStore** will get the persisted data. This function is provided to manually get the store's persisted data.
 >
 > ```javascript
 > import { makeAutoObservable } from 'mobx';
 > import { makePersistable, getPersistedStore } from 'mobx-persist-store';
 >
 > class SampleStore {
->   someProperty: [];
+>   someProperty = [];
 >
 >   constructor() {
 >     makeAutoObservable(this, {}, { autoBind: true });
